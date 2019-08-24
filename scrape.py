@@ -67,7 +67,9 @@ def parse_all_args():
     parser.add_argument('-u', '--url', type=str, help='url to scrape')
     parser.add_argument('-m', '--max-pages', type=int, help='maximum num of pages to scrape')
     parser.add_argument('-f', '--file-name', type=str, 
-                                default='results', help='output csv file name')
+        default='results', help='output csv file name')
+    parser.add_argument('-M', '--multi-urls-from-file', 
+        type=str, help='read in a list of urls and desired csv save file names from a csv file')
     args = parser.parse_args()
 
     return args
@@ -135,7 +137,7 @@ def parse_to_soup_obj(driver):
 
 
 
-def scrape_all(driver, url):
+def scrape_all(driver, url, csv_file_name):
     """Scrape current url and returns results in a list"""
 
     rows_data = []
@@ -175,19 +177,19 @@ def scrape_all(driver, url):
         
         i += 1
 
-    save_to_csv(rows_data)
+    save_to_csv(rows_data, csv_file_name)
 
     return
 
 
-def save_to_csv(rows_data):
+def save_to_csv(rows_data, csv_file_name):
     """Saves scraped data to csv"""
 
     columns = rows_data.pop(0)
     df =  pd.DataFrame(rows_data, columns=columns)
     df = df.drop(df.columns[0], axis=1)
     df[df.columns[0]] = df[df.columns[0]].apply(lambda x: x.split('.')[1].strip()) 
-    file_name = 'scraped_data\\' + args.file_name + '.csv'
+    file_name = 'scraped_data\\' + csv_file_name + '.csv'
     df.to_csv(file_name)
     print("Wrote to", file_name)
 
@@ -204,6 +206,19 @@ if __name__ == "__main__":
     login(driver, cred)
     time.sleep(2)
 
-    scrape_all(driver, args.url)
+    # Loading URL from file
+    if args.multi_urls_from_file != "":
+        with open("urls.txt", 'r') as f:
+            urls_file_names = f.readlines()
+            
+        for url_file_name in urls_file_names:
+            url, file_name = url_file_name.split(',')
+            file_name = file_name.strip()
+
+            scrape_all(driver, url, file_name)
+
+    # Loading URL from command line        
+    else:
+        scrape_all(driver, args.url, args.file_name)
     
     driver.close()

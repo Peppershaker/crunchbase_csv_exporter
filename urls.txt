@@ -1,0 +1,9 @@
+https://www.crunchbase.com/search/organization.companies/b9e21d350de9c59a8a3db427bb4f81e5,peter_thiel_lead
+https://www.crunchbase.com/search/organization.companies/0aee55e6de9ac7c29377eac39d465a8e,marc_benioff_lead
+https://www.crunchbase.com/search/organization.companies/dcf3da28070d552037cf834c9e1f3840,peter_thiel_all
+https://www.crunchbase.com/search/organization.companies/322b65b29bec8c74f71f481ec94aee47,marc_benioff_all
+https://www.crunchbase.com/search/organization.companies/52cfb4edcac4ff9a9d432dd4ecc69c9b,reid_hoffman_all
+https://www.crunchbase.com/search/organization.companies/8330698566fe7bfa9efa3de5be4e711e,chris_sacca_all
+https://www.crunchbase.com/search/organization.companies/9df42ba3232288a484075e1745954ccc,yc_90_day_trend_over_2
+https://www.crunchbase.com/search/organization.companies/d76c1751ad34bb147525fa4110f3d54e,yc_90_day_trend_0.1_to_2
+https://www.crunchbase.com/search/organization.companies/75183b9190061e3831268b93e4a37d4f,500_startups_90_day_trend_over_0
