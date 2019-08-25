@@ -20,6 +20,12 @@ Alternatively, you can supply a list of URLs and its corresponding csv file name
 # ./python -m cbexporter -M urls.txt -m 10
 ```
 
+The urls.txt file must follow the csv syntax of url,file_name
+```
+https://crunchbase.search.url,first_search
+https://crunchbase.search.url2,second_search
+```
+
 
 ## Version 
 * Version 1.0
