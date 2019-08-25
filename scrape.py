@@ -1,7 +1,7 @@
 """
 Package Name: Crunchbase CSV Exporter
 Description: This Python command line utility uses Selenium to save search results to a
-            CSV file. It is NOT intended to be used as a comprehensive scraper and 
+            CSV file. It is NOT intended to be used as a comprehensive scraper and
             you will have to solve the capcha manually. It allows the user to save any
             search result for a maximum specified number of pages. Please refer to the
             help page for more usage details.
@@ -22,14 +22,18 @@ from selenium.common.exceptions import StaleElementReferenceException, NoSuchEle
 from selenium.common.exceptions import ElementClickInterceptedException
 from bs4 import BeautifulSoup
 
+
 def init_driver():
     """Initialize the webdriver"""
-    
-    user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
+
+    user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36' + \
+        '(KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36'
     options = Options()
     options.add_argument(f'user-agent={user_agent}')
     options.headless = False
-    driver = webdriver.Chrome('C:\Program Files (x86)\chromedriver.exe', options=options)
+    driver = webdriver.Chrome(
+        r'C:\Program Files (x86)\chromedriver.exe',
+        options=options)
 
     return driver
 
@@ -45,15 +49,19 @@ def login(driver, cred):
     while not logged_in:
         try:
             driver.get("https://www.crunchbase.com/login")
-            driver.find_element_by_xpath('//*[@id="mat-input-1"]').send_keys(username)
-            driver.find_element_by_xpath('//*[@id="mat-input-2"]').send_keys(password)
-            driver.find_element_by_xpath('//*[@id="mat-tab-content-0-0"]/div/login/form/div/button[2]').click()
+            driver.find_element_by_xpath(
+                '//*[@id="mat-input-1"]').send_keys(username)
+            driver.find_element_by_xpath(
+                '//*[@id="mat-input-2"]').send_keys(password)
+            driver.find_element_by_xpath(
+                '//*[@id="mat-tab-content-0-0"]' +
+                '/div/login/form/div/button[2]').click()
 
             time.sleep(3)
             check_recapcha(driver)
             logged_in = True
             print("Successfully logged in")
-        
+
         except (StaleElementReferenceException, NoSuchElementException):
             check_recapcha(driver)
 
@@ -66,35 +74,46 @@ def load_user_pass():
     with open('cred.txt', 'r') as f:
         user_name = f.readline()
         password = f.readline()
-    
+
     return (user_name, password)
 
 
 def parse_all_args():
     """Parses arguments and returns it"""
 
-    parser=argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--url', type=str, help='url to scrape')
-    parser.add_argument('-m', '--max-pages', type=int, help='maximum num of pages to scrape')
-    parser.add_argument('-f', '--file-name', type=str, 
-        default='results', help='output csv file name')
-    parser.add_argument('-M', '--multi-urls-from-file', 
-        type=str, help='read in a list of urls and desired csv save file names from a csv file')
+    parser.add_argument(
+        '-m',
+        '--max-pages',
+        type=int,
+        help='maximum num of pages to scrape')
+    parser.add_argument(
+        '-f',
+        '--file-name',
+        type=str,
+        default='results',
+        help='output csv file name')
+    parser.add_argument(
+        '-M',
+        '--multi-urls-from-file',
+        type=str,
+        help='read in a list of urls and desired csv save file names from a csv file')
     args = parser.parse_args()
 
     return args
 
 
 def process_html_for_data(rows_data, soup):
-    """Scrapes html and returns data as a list of list, where each child list 
+    """Scrapes html and returns data as a list of list, where each child list
     represents a row
-    
+
     Args:
         rows_data: list
             List storing all search results. Each element within rows_data is a list containing
             results for a single row
 
-        soup: BeautifulSoup 
+        soup: BeautifulSoup
             a BeautifulSoup object representing the search result page
 
     Returns
@@ -108,8 +127,8 @@ def process_html_for_data(rows_data, soup):
         cells = row.find_all('div', class_='component--grid-cell')
         single_row_data = []
         for cell in cells:
-            single_row_data.append(cell.get_text().strip().replace('—',''))
-    
+            single_row_data.append(cell.get_text().strip().replace('—', ''))
+
         rows_data.append(single_row_data)
 
     return rows_data
@@ -123,7 +142,7 @@ def process_html_for_col_name(rows_data, soup):
             List storing all search results. Each element within rows_data is a list containing
             results for a single row
 
-        soup: BeautifulSoup 
+        soup: BeautifulSoup
             a BeautifulSoup object representing the search result page
 
     Returns
@@ -131,13 +150,12 @@ def process_html_for_col_name(rows_data, soup):
             With new search results appended
     """
 
-
     cols = soup.find_all('grid-column-header')
 
     col_names = []
     for col in cols:
         col_names.append(col.get_text())
-    
+
     rows_data.append(col_names)
 
     return rows_data
@@ -161,17 +179,15 @@ def check_recapcha(driver):
         return None
 
 
-
 def parse_to_soup_obj(driver):
     """
     Returns the current page as a soup object
     """
-    
+
     html_element = driver.find_element_by_xpath("//*")
     html_string = html_element.get_attribute("outerHTML")
 
     return BeautifulSoup(html_string, 'html.parser')
-
 
 
 def scrape_all(driver, url, csv_file_name):
@@ -186,32 +202,32 @@ def scrape_all(driver, url, csv_file_name):
     # btn for next page
     btn_xpath = "/html/body/chrome/div/mat-sidenav-container" + \
         "/mat-sidenav-content/search/page-layout/div/div/form" + \
-            "/div[2]/results/div/div/div[1]/div/results-info/h3/a[2]"
+        "/div[2]/results/div/div/div[1]/div/results-info/h3/a[2]"
 
     while not_finished:
         # Just checks and waits 10 seconds for now. Have to manually solve if
         # capcha is present
         check_recapcha(driver)
 
-        page_soup = parse_to_soup_obj(driver) 
+        page_soup = parse_to_soup_obj(driver)
 
         if i == 1:
             process_html_for_col_name(rows_data, page_soup)
-        
+
         process_html_for_data(rows_data, page_soup)
 
         # grab next page url
         try:
             print("Next page")
             url = driver.find_element_by_xpath(btn_xpath).click()
-        
+
         except (NoSuchElementException, ElementClickInterceptedException):
             not_finished = False
 
         if i > args.max_pages:
             print("Reached max pages.")
             not_finished = False
-        
+
         i += 1
 
     save_to_csv(rows_data, csv_file_name)
@@ -223,9 +239,10 @@ def save_to_csv(rows_data, csv_file_name):
     """Saves scraped data to csv"""
 
     columns = rows_data.pop(0)
-    df =  pd.DataFrame(rows_data, columns=columns)
+    df = pd.DataFrame(rows_data, columns=columns)
     df = df.drop(df.columns[0], axis=1)
-    df[df.columns[0]] = df[df.columns[0]].apply(lambda x: x.split('.')[1].strip()) 
+    df[df.columns[0]] = df[df.columns[0]].apply(
+        lambda x: x.split('.')[1].strip())
     file_name = 'scraped_data\\' + csv_file_name + '.csv'
     df.to_csv(file_name)
     print("Wrote to", file_name)
@@ -247,15 +264,15 @@ if __name__ == "__main__":
     if args.multi_urls_from_file != "":
         with open("urls.txt", 'r') as f:
             urls_file_names = f.readlines()
-            
+
         for url_file_name in urls_file_names:
             url, file_name = url_file_name.split(',')
             file_name = file_name.strip()
 
             scrape_all(driver, url, file_name)
 
-    # Loading URL from command line        
+    # Loading URL from command line
     else:
         scrape_all(driver, args.url, args.file_name)
-    
+
     driver.close()
