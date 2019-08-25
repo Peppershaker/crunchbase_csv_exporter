@@ -3,3 +3,4 @@ cookies
 scraped_data
 debug.log
 urls.txt
+.pytest_cache/

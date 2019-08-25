@@ -12,8 +12,10 @@ Author: Victor Xu
 import time
 import sys
 import argparse
+import glob
 
 import pandas as pd
+import numpy as np
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -21,6 +23,60 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
 from selenium.common.exceptions import ElementClickInterceptedException
 from bs4 import BeautifulSoup
+
+
+class Df_ext(pd.DataFrame):
+    """Class extending pd.DataFrame with combine row functionality."""
+
+    def combine_row(self):
+        """
+        Combines data for rows of the same key(company name)
+
+        Example
+        Facebook,na,1 hacker way,550B
+        Facebook,15022,na,na
+
+        Will be combined into a single row
+        Facebook,15022,1 hacker way,550B
+        """
+
+        from tqdm import tqdm
+
+        # Iterate through all unique keys
+        keys = self.iloc[:, 0].unique()
+        new_df_rows = []
+        new_df_rows.append(self.reset_index(drop=True).columns.values)
+
+        for key in tqdm(keys):
+            filtered_df = self.loc[self.iloc[:, 0]
+                                   == key, :].reset_index(drop=True)
+            if filtered_df.shape[0] == 1:
+                new_df_rows.append(filtered_df.values)
+
+            else:
+                reduced_row_data = []
+
+                for col in filtered_df.columns:
+                    # returns None if all rows are np.nan
+                    valid_row_idx = filtered_df[col].first_valid_index()
+
+                    if valid_row_idx is None:
+                        # All columns are nans
+                        valid_row_data_for_this_col = None
+
+                    else:
+                        valid_row_data_for_this_col = filtered_df.loc[valid_row_idx, col]
+
+                    reduced_row_data.append(valid_row_data_for_this_col)
+
+                new_df_rows.append(np.array(reduced_row_data).reshape(1, -1))
+
+        new_df_rows = np.vstack(new_df_rows)
+        combined = Df_ext(new_df_rows)
+        combined.columns = [str(s).strip() for s in combined.iloc[0, :].values]
+        combined = combined.iloc[1:, :]
+
+        return combined
 
 
 def init_driver():
@@ -99,6 +155,11 @@ def parse_all_args():
         '--multi-urls-from-file',
         type=str,
         help='read in a list of urls and desired csv save file names from a csv file')
+    parser.add_argument(
+        '-c',
+        '--combine-csvs',
+        type=str,
+        help='combines all csv files in the scraped_data directory and removed all duplicates')
     args = parser.parse_args()
 
     return args
@@ -250,18 +311,44 @@ def save_to_csv(rows_data, csv_file_name):
     return
 
 
-if __name__ == "__main__":
-    driver = init_driver()
+def combine_csvs(output_file_name):
+    """
+    Combines all CSVs into a single master csv using the Df_ext.combine_row() method.
+    Each company in the output csv will retain all information from separate csvs.
+    """
 
+    # Get all file names in the scraped_data directory
+    file_list = [pd.read_csv(filename)
+                 for filename in glob.glob("scraped_data/*.csv")]
+    df = pd.concat(file_list, axis=0, sort=False)
+    df = df.drop('Unnamed: 0', axis=1)
+
+    # # Remove duplicats and combine rows
+    df = df.drop_duplicates()
+    df_ext = Df_ext(df)
+    df_ext = df_ext.combine_row()
+    df_ext.to_csv(output_file_name)
+
+    return
+
+
+if __name__ == "__main__":
     # Parse args
     args = parse_all_args()
+
+    # Combine csv
+    if args.combine_csvs is not None:
+        combine_csvs(args.combine_csvs)
+        sys.exit(1)
+
+    driver = init_driver()
 
     cred = load_user_pass()
     login(driver, cred)
     time.sleep(2)
 
     # Loading URL from file
-    if args.multi_urls_from_file != "":
+    if args.multi_urls_from_file is not None:
         with open("urls.txt", 'r') as f:
             urls_file_names = f.readlines()
 
