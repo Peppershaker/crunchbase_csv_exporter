@@ -1,6 +1,8 @@
+![cb](https://user-images.githubusercontent.com/15576531/63644434-f77ca780-c6b6-11e9-9285-058c5b591d63.jpg)
+
 Crunchbase CSV Exporter
 ======
-**Crunchbase CSV Exporter** is a Python and Selenium based tool to export Crunchbase search results to a CSV file. It is intended for Pro trial account holders who does not get access to CB's native export to CSV functionality.
+**Crunchbase CSV Exporter** is a Python and Selenium based tool to export Crunchbase search results to CSV files. It is intended for Pro trial account holders who do not have access to CB's native export to CSV functionality.
 
 Note: This tool is not intended to be used as a scraper. As such, it makes no attempt to defeat capcha. Prior to logging in, you might have to manually solve the Hold-To-Confirm-Human capcha.
 
