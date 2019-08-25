@@ -1,3 +1,14 @@
+"""
+Package Name: Crunchbase CSV Exporter
+Description: This Python command line utility uses Selenium to save search results to a
+            CSV file. It is NOT intended to be used as a comprehensive scraper and 
+            you will have to solve the capcha manually. It allows the user to save any
+            search result for a maximum specified number of pages. Please refer to the
+            help page for more usage details.
+Date: Feb 2019
+Author: Victor Xu
+"""
+
 import time
 import sys
 import argparse
@@ -63,7 +74,6 @@ def parse_all_args():
     """Parses arguments and returns it"""
 
     parser=argparse.ArgumentParser()
-    parser.add_argument('-l', '--login', action='store_true',  help='login to CB')
     parser.add_argument('-u', '--url', type=str, help='url to scrape')
     parser.add_argument('-m', '--max-pages', type=int, help='maximum num of pages to scrape')
     parser.add_argument('-f', '--file-name', type=str, 
@@ -77,7 +87,20 @@ def parse_all_args():
 
 def process_html_for_data(rows_data, soup):
     """Scrapes html and returns data as a list of list, where each child list 
-    represents a row"""
+    represents a row
+    
+    Args:
+        rows_data: list
+            List storing all search results. Each element within rows_data is a list containing
+            results for a single row
+
+        soup: BeautifulSoup 
+            a BeautifulSoup object representing the search result page
+
+    Returns
+        rows_data: list
+            With new search results appended
+    """
 
     rows = soup.find_all('div', class_='component--grid-row')
 
@@ -93,7 +116,21 @@ def process_html_for_data(rows_data, soup):
 
 
 def process_html_for_col_name(rows_data, soup):
-    """Gets the column names"""
+    """
+    Gets the column names
+    Args:
+        rows_data: list
+            List storing all search results. Each element within rows_data is a list containing
+            results for a single row
+
+        soup: BeautifulSoup 
+            a BeautifulSoup object representing the search result page
+
+    Returns
+        rows_data: list
+            With new search results appended
+    """
+
 
     cols = soup.find_all('grid-column-header')
 
