@@ -61,7 +61,7 @@ first.csv
 
 | Company Name  | Mkt Cap | Col2 | Address |
 | ------------- | ------------- | ------------- | ------------- |
-| Facebook  |||"1 Hacker Way"|
+| Facebook  |||1 Hacker Way|
 
 second.csv
 
@@ -73,7 +73,7 @@ output
 
 | Company Name  | Mkt Cap | Col2 | Address |
 | ------------- | ------------- | ------------- | ------------- |
-| Facebook  |500B||"1 Hacker Way"|
+| Facebook  |500B||1 Hacker Way|
 
 This could be accomplished with joins, merges, and updates, but with multiple CSV files it becomes very involved and hard to automate.
 
