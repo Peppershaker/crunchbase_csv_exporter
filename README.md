@@ -9,21 +9,17 @@ Note: This tool is not intended to be used as a scraper. As such, it makes no at
 Usage
 ======
 ```
-usage: cbexporter.py [-h] [-u URL] [-m MAX_PAGES] [-f FILE_NAME]
-                     [-M MULTI_URLS_FROM_FILE] [-c COMBINE_CSVS]
+usage: cbexporter.py [-h] [-u] [-m] [-f] [-M] [-c]
 
 optional arguments:
   -h, --help            show this help message and exit
-  -u URL, --url URL     url to scrape
-  -m MAX_PAGES, --max-pages MAX_PAGES
-                        maximum num of pages to scrape
-  -f FILE_NAME, --file-name FILE_NAME
-                        output csv file name
-  -M MULTI_URLS_FROM_FILE, --multi-urls-from-file MULTI_URLS_FROM_FILE
+  -u , --url            url to scrape
+  -m , --max-pages      maximum num of pages to scrape
+  -f , --file-name      output csv file name
+  -M , --multi-urls-from-file
                         read in a list of urls and desired csv save file names
                         from a csv file
-  -c COMBINE_CSVS, --combine-csvs COMBINE_CSVS
-                        combines all csv files in the scraped_data directory
+  -c , --combine-csvs   combines all csv files in the scraped_data directory
                         and removed all duplicates
 ```
 
