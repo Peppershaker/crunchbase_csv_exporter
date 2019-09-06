@@ -142,22 +142,26 @@ def parse_all_args():
     parser.add_argument(
         '-m',
         '--max-pages',
+        metavar="",
         type=int,
         help='maximum num of pages to scrape')
     parser.add_argument(
         '-f',
         '--file-name',
+        metavar="",
         type=str,
         default='results',
         help='output csv file name')
     parser.add_argument(
         '-M',
         '--multi-urls-from-file',
+        metavar="",
         type=str,
         help='read in a list of urls and desired csv save file names from a csv file')
     parser.add_argument(
         '-c',
         '--combine-csvs',
+        metavar="",
         type=str,
         help='combines all csv files in the scraped_data directory and removed all duplicates')
     args = parser.parse_args()
