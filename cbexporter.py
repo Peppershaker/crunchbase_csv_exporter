@@ -138,7 +138,7 @@ def parse_all_args():
     """Parses arguments and returns it"""
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-u', '--url', type=str, help='url to scrape')
+    parser.add_argument('-u', '--url', metavar="", type=str, help='url to scrape')
     parser.add_argument(
         '-m',
         '--max-pages',
