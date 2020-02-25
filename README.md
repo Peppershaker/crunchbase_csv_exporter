@@ -71,7 +71,7 @@ output
 | ------------- | ------------- | ------------- | ------------- |
 | Facebook  |500B||1 Hacker Way|
 
-This could be accomplished with joins, merges, and updates, but with multiple CSV files it becomes very involved and hard to automate.
+This could be accomplished with joins, but with multiple CSV files it becomes very involved and hard to automate.
 
 Alternatively, you can use the `-c --combine-csvs` flag and specify the save file name. The tool will combine all csvs within the `scraped_data` folder
 
